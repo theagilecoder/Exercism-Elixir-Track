@@ -8,11 +8,27 @@ defmodule Words do
   @spec count(String.t()) :: map
   def count(sentence) do
     sentence
-    |> String.downcase
-    |> String.split(@regex, trim: true)   # Remove all Special characters
-    |> Enum.reduce(%{}, &map_update(&2, &1))
+    |> normalize()
+    |> split_words()
+    |> word_count()
   end
 
+  # Normalize the given sentence
+  defp normalize(sentence) do
+    String.downcase(sentence)
+  end
+
+  # Split sentence into a list of words, removing special characters
+  defp split_words(sentence) do
+    String.split(sentence, @regex, trim: true)
+  end
+
+  # Create the expected map of word-counts
+  defp word_count(wordlist) do
+    Enum.reduce(wordlist, %{}, &map_update(&2, &1))
+  end
+
+  # Update map of word count
   defp map_update(acc, x) do
     Map.update(acc, x, 1, &(&1 + 1))
   end
